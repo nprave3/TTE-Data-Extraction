@@ -4,7 +4,7 @@ library(tidyverse)
 library(openxlsx)
 
 # Specify the file path
-excel_file_path <- '/Users/Nischal/Desktop/echo_deidentified.xlsx'
+excel_file_path <- '/Users/Nischal/TTE_DataExtraction/echo_deidentified.xlsx'
 
 # Read the Excel file into a DataFrame
 df <- read_excel(excel_file_path)
@@ -1442,4 +1442,4 @@ output_data <- do.call(rbind, output_list)
 colnames(output_data) <- make.unique(as.character(colnames(output_data)))
 
 # Write the data frame to an Excel file
-write.xlsx(output_data, '/Users/Nischal/Desktop/De-identified WORD ECHO REPORTS/CSV_Echo Variables Output_R.xlsx', rowNames = FALSE)
+write.xlsx(output_data, '/Users/Nischal/TTE_DataExtraction/CSV_Echo Variables Output_R.xlsx', rowNames = FALSE)
