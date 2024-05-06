@@ -1,4 +1,11 @@
-# TTE-Data-Extraction
-# TTE-Data-Extraction
-# TTE-Data-Extraction
-# TTE-Data-Extraction
+# TTE-Data-Extraction Repository:
+This repository contains the files relevant to the TTE data extraction project. 
+
+# echo_deidentified.xlsx:
+This file contains 1000 raw TTE reports with patient name and MRN removed. The code is being used to look through the various columns and rows of this file.
+
+# TTE_DataExtraction.R:
+R script containing that contains all the code which helps identify and extract specific variables from the TTE reports available in "echo_deidentified.xlsx". This includes variables like age, heart rate, LA Size, aortic stenosis, etc. This is fundamentally achieved through the use of regular expressions to identify text patterns. The code is then looped through each row of the column titled "Procedure_Report". The code finally outputs all the variables into seperate columns onto the spreadsheet titled, "CSV_Echo Variables Output_R.xlsx".
+
+# CSV_Echo Variables Output_R.xlsx
+This is the output file that is created when the code is executed. This contains all the variable data that is currently being collected. Adjacent columns are sometimes in the form of Aortic.Stenosis and then Aortic.Stenosis.Error. The latter provides insight into the context of the first such as when it is empty or when it is populated but does not appear in the original procedure report in the manner expected. For example, consider if "severe aortic stenosis"" is listed in the doppler evaluation section of the report but then not at all mentioned in the conclusions section. Then the Aortic.Stenosis column will list the qualification of aortic stenosis found in the doppler section ("severe") and the Aortic.Stenosis.Error column will say "Error: No aortic stenosis sentence found in conclusions section" because the anticipated text pattern does not appear in the conclusions section. The reason that both sections are searched is to create a logic check to see that no discrepencies exist within the report and to also help identify regex patterns or code that do not function correctly. Of note the term, "categorization"" is the specific qualification used in the report for a particular variable. For example, "severe" in "severe aortic stenosis" is the categorization. When "aortic stenosis" is found but not a qualification such as mild, moderate,severe, etc is absent "Error: categorization not found within doppler sentence". Another error appears when findings are not identical between the doppler section and the conclusions section. In this scenario the Aortic.Stenosis column will populate with the doppler section data and the error mentioned will appear in the adjacent Aortic.Stenosis.Error column. Other errors also exist but should be self-explanatory.
