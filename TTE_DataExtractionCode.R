@@ -6,6 +6,7 @@ library(openxlsx)
 # Specify the file path
 excel_file_path <- '/Users/Nischal/TTE_DataExtraction/echo_deidentified.xlsx'
 
+
 # Read the Excel file into a DataFrame
 df <- read_excel(excel_file_path)
 
@@ -104,12 +105,12 @@ for (index in seq(nrow(df))) {
   #LA Size
   
   # Pattern 1
-  pattern_LAsize_1 <- "(?:left atrium|left atrial size)(?:\\sis)?(?:\\sindexed)?(?:\\sto)?\\s(not well seen|likely normal|normal|mildly to moderately|Mildly to moderately|mildly - moderately|mildly-moderately|mildly|Mildly|moderately to severely|moderately - severely|moderately-severely|moderately|Moderately|severely|elongated)(?:\\sdilated)?"
+  pattern_LAsize_1 <- "(?:left atrium|left atrial size)(?:\\sis)?(?:\\sindexed)?(?:\\sto)?\\s([Nn]ot well seen|[Ll]ikely normal|[Nn]ormal|mildly to moderately|Mildly to moderately|mildly - moderately|mildly-moderately|mildly|Mildly|moderately to severely|moderately - severely|moderately-severely|moderately|Moderately|severely|very severely|elongated)(?:\\sdilated)?"
   matches_LAsize_1 <- str_match_all(document_text, pattern_LAsize_1)
   num_matches_LAsize_1 <- length(matches_LAsize_1[[1]])
   
   # Pattern 2
-  pattern_LAsize_2 <- "(?:Conclusions.*?)(Mildly to moderately|Mildly - moderately|Mildly-moderately|Mildly|Moderately to severely|Moderately - severely|Moderately-severely|Moderately|Severely|Elongated)(?:\\s\\w+)?(?:\\s\\w+)?(?:\\s\\w+)?(?:\\s&)?(?:\\sleft)(?:\\sand)?(?:\\s&)?(?:\\sright)?(?:\\satrium)"
+  pattern_LAsize_2 <- "(?:CONCLUSIONS.*?)(Mildly to moderately|Mildly - moderately|Mildly-moderately|Mildly|Moderately to severely|Moderately - severely|Moderately-severely|Moderately|Severely|Elongated)(?:\\s\\w+)?(?:\\s\\w+)?(?:\\s\\w+)?(?:\\s&)?(?:\\sleft)(?:\\sand)?(?:\\s&)?(?:\\sright)?(?:\\satrium)"
   matches_LAsize_2 <- regmatches(document_text, regexec(pattern_LAsize_2, document_text, ignore.case = TRUE))
   num_matches_LAsize_2 <- length(matches_LAsize_2[[1]])
   
@@ -187,7 +188,7 @@ for (index in seq(nrow(df))) {
     }
   }
   # Qualitative LV Size
-  pattern_LVSize <- "left ventricular cavity size is (normal|mildly to moderately|mildly - moderately|mildly-moderately|mildly|moderately - severely|moderately-severely|moderately to severely|moderately|severely|decreased)(?:\\s+)?(?:dilated|increased)?"
+  pattern_LVSize <- "left ventricular cavity size is (normal|mildly to moderately|mildly - moderately|mildly-moderately|mildly|moderately - severely|moderately-severely|moderately to severely|moderately|very severely|severely|decreased|not well seen|not visualized)(?:\\s+)?(?:dilated|increased)?"
   match_LVSize <- regmatches(document_text, regexec(pattern_LVSize, document_text, ignore.case = TRUE))
   
   if (length(match_LVSize[[1]]) > 0) {
@@ -213,6 +214,7 @@ for (index in seq(nrow(df))) {
   pattern_LVHypertrophy <- "Ventricular wall thickness is (normal|mildly to moderately|mildly - moderately|mildly-moderately|mildly|moderately - severely|moderately-severely|moderately to severely|moderately|severely)(?:\\s+)?(?:dilated|increased)?"
   match_LVHypertrophy <- regmatches(document_text, regexec(pattern_LVHypertrophy, document_text, ignore.case = TRUE))
   
+  output_LVHypertrophy <- ""
   output_LVHypertrophyError <- ""
   
   if (length(match_LVHypertrophy[[1]]) > 0) {
@@ -237,7 +239,7 @@ for (index in seq(nrow(df))) {
           output_LVHypertrophyError <- sprintf("Non-identical LV Hypertrophy matches found, pattern 1 = %s, pattern 2 = %s", match_value, match_LVHypertrophy2[[1]][1])
         }
       } else {
-        pattern_LVHypertrophy3 <- "(?:Conlusions:.*)Ventricular wall thickness is (moderately - severely|moderately-severely|moderately to severely|moderately|severely)(?:\\s+)?(?:dilated|increased)?"
+        pattern_LVHypertrophy3 <- "(?:CONCLUSIONS:.*?)Ventricular wall thickness is (moderately - severely|moderately-severely|moderately to severely|moderately|severely)(?:\\s+)?(?:dilated|increased)?"
         match_LVHypertrophy3 <- regmatches(document_text, regexec(pattern_LVHypertrophy3, document_text, ignore.case = TRUE))
         
         if (length(match_LVHypertrophy3[[1]]) > 0) {
@@ -259,16 +261,17 @@ for (index in seq(nrow(df))) {
       }
     }
   } else {
-    pattern_LVHypertrophy4 <- "There is (no|mild to moderate|mild - moderate|mild-moderate|mild|moderate - severe|moderate-severe|moderate to severe|moderate|severe)(?:\\s+)?(?:LV|left ventricular)(?:\\shypertrophy)"
-    match_LVHypertrophy4 <- regmatches(document_text, regexec(pattern_LVHypertrophy4, document_text, ignore.case = TRUE))
-    
-    if (length(match_LVHypertrophy4[[1]]) > 0) {
-      cat(sprintf("LV Hypertrophy: %s\n", match_LVHypertrophy4[[1]][1]))
-      output_LVHypertrophy <- match_LVHypertrophy4[[1]][1]
+    pattern_LVHypertophy4 <- "(?:There is )?([Nn]o|[Mm]ild to moderate|[Mm]ild - moderate|[Mm]ild-moderate|[Mm]ild|[Mm]oderate - severe|[Mm]oderate-severe|[Mm]oderate to severe|[Mm]oderate|[Ss]evere|[Ee]ccentric)(?:\\s+)?(?:\\w+)?(?:\\s+)?(?:LV|left ventricular)(?:\\shypertrophy)"
+    match_LVHypertrophy4 <- str_match(document_text, pattern_LVHypertophy4)
+    if (!is.na(match_LVHypertrophy4[1, 2])) {
+      match_LVH4 <- tolower(match_LVHypertrophy4[1, 2])
+      output_LVHypertrophy <- tolower(match_LVH4)
+      cat(sprintf("LV Hypertrophy: %s\n", match_LVH4))
     } else {
       cat("LV Hypertrophy: No match found for LV Hypertrophy\n")
-      output_LVHypertrophy <- "No match found for LV Hypertrophy"
+      output_LVHypertrophyError <- "LV Hypertrophy: Error, No match found for LV Hypertrophy"
     }
+    
   }
   
   # LVDiD
@@ -304,7 +307,7 @@ for (index in seq(nrow(df))) {
   
   #LV Function
   
-  LVFunctionsentence_pattern_1 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?([^.]*left ventricular function[^.]*).*CONCLUSIONS"
+  LVFunctionsentence_pattern_1 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?([^.]*[Ll]eft ventricular function[^.]*).*CONCLUSIONS"
   LVFunctionsentence_matches_1 <- str_match(document_text, LVFunctionsentence_pattern_1)
   LVFunctionsentence_pattern_2 <- "CONCLUSIONS.*?([^.]*left ventricular function[^.]*)"
   LVFunctionsentence_matches_2 <- str_match(document_text, LVFunctionsentence_pattern_2)
@@ -312,14 +315,14 @@ for (index in seq(nrow(df))) {
   output_LVFunction <- ""
   output_LVFunctionError <- ""
   
-  if (!is.na(LVFunctionsentence_matches_1 [1, 2]) && !is.na(LVFunctionsentence_matches_2 [1, 2])) {
+  if (!is.na(LVFunctionsentence_matches_1[1, 2]) && !is.na(LVFunctionsentence_matches_2[1, 2])) {
     LVFunctionsentence_1 <- LVFunctionsentence_matches_1 [1, 2]
     LVFunctionsentence_2 <- LVFunctionsentence_matches_2 [1, 2]
     cat(sprintf("LVFunction Sentence 1: %s\n", LVFunctionsentence_1))
     cat(sprintf("LVFunction Sentence 2: %s\n", LVFunctionsentence_2))
-    LVFunction_1_pattern <- "(low (?:\\s+)?normal|normal|mildly to moderately|mildly - moderately|mildly-moderately|mildly|moderately - severely|moderately-severely|moderately to severely|moderately|severely|hyperdynamic)"
+    LVFunction_1_pattern <- "(low (?:\\s+)?normal|normal|mildly to moderately|mildly - moderately|mildly-moderately|mildly|moderately - severely|moderately-severely|moderately to severely|moderately|severely|hyperdynamic|preserved|reduced)"
     LVFunction_1_match <- str_match(LVFunctionsentence_1, LVFunction_1_pattern)
-    LVFunction_2_pattern <- "(Low (?:\\s+)?normal|low (?:\\s+)?normal|Normal|normal|Mildly to moderately|mildly to moderately|Mildly - moderately|mildly - moderately|Mildly-moderately|mildly-moderately|Mildly|mildly|Moderately - severely|moderately - severely|Moderately-severely|moderately-severely|Moderately to severely|moderately to severely|Moderately|moderately|Severely|severely|Hyperdynamic|hyperdynamic)"
+    LVFunction_2_pattern <- "(Low (?:\\s+)?normal|low (?:\\s+)?normal|Normal|normal|Mildly to moderately|mildly to moderately|Mildly - moderately|mildly - moderately|Mildly-moderately|mildly-moderately|Mildly|mildly|Moderately - severely|moderately - severely|Moderately-severely|moderately-severely|Moderately to severely|moderately to severely|Moderately|moderately|Severely|severely|Hyperdynamic|hyperdynamic|Preserved|preserved|Reduced|reduced)"
     LVFunction_2_match <- str_match(LVFunctionsentence_2, LVFunction_2_pattern)
     if (!is.na(LVFunction_1_match [1, 2]) && !is.na(LVFunction_2_match [1, 2])){
       LVFunction_1 <- LVFunction_1_match [1, 2]
@@ -328,7 +331,8 @@ for (index in seq(nrow(df))) {
         output_LVFunction <- LVFunction_1_match [1, 2]
         cat(sprintf("LV Function: %s\n", LVFunction_1))
       } else {
-        output_LVFunction <- LVFunction_1_match 
+        output_LVFunction <- LVFunction_1
+        cat(sprintf("LV Function: %s\n", LVFunction_1))
         output_LVFunctionError <- "LV Function: Error, non-matching findings"
       }
     } else {
@@ -336,19 +340,26 @@ for (index in seq(nrow(df))) {
       output_LVFunction <- ""
       output_LVFunctionError <- "LV Function: Error, no LV Function categorization found within either LV function sentence"
     }
-  } else if (!is.na(LVFunctionsentence_matches_1 [1, 2]) && is.na(LVFunctionsentence_matches_2 [1, 2])){
+  } else if (!is.na(LVFunctionsentence_matches_1[1, 2]) && is.na(LVFunctionsentence_matches_2[1, 2])){
     LVFunctionsentence_1 <- LVFunctionsentence_matches_1 [1, 2]
     cat(sprintf("LVFunction Sentence 1: %s\n", LVFunctionsentence_1))
-    LVFunction_1_pattern <- "(low (?:\\s+)?normal|normal|mildly to moderately|mildly - moderately|mildly-moderately|mildly|moderately - severely|moderately-severely|moderately to severely|moderately|severely|hyperdynamic)"
+    LVFunction_1_pattern <- "(low (?:\\s+)?normal|normal|mildly to moderately|mildly - moderately|mildly-moderately|mildly|moderately - severely|moderately-severely|moderately to severely|moderately|severely|hyperdynamic|preserved|reduced)"
     LVFunction_1_match <- str_match(LVFunctionsentence_1, LVFunction_1_pattern)
     if (!is.na(LVFunction_1_match [1, 2])){
       output_LVFunction <- LVFunction_1_match [1, 2]
       output_LVFunctionError <- "LV Function in conlusions not found"
     } 
   } else {
-    cat("LV Function Sentence: not found in the document.\n")
-    output_LVFunction <- ""
-    output_LVFunctionError <- "LV Function sentence not found in the document."
+    pattern_LVdysfunction <- "(LV dysfunction is diffuse|diffuse LV dysfunction)"
+    matches_LVdysfunction <- str_match(document_text, pattern_LVdysfunction)
+    if (!is.na(matches_LVdysfunction [1, 2])) {
+      output_LVFunction <- matches_LVdysfunction [1, 2]
+      cat(sprintf("LVFunction: %s\n", matches_LVdysfunction [1, 2]))
+    } else {
+      cat("LV Function Sentence: not found in the document.\n")
+      output_LVFunction <- ""
+      output_LVFunctionError <- "LV Function sentence not found in the document."
+    }
   }
   
   #Simpson's LVEF
@@ -454,7 +465,7 @@ for (index in seq(nrow(df))) {
   }
   
   # Right atrial pressure - add else statement for when PA systolic pressure is not assessed
-  pattern_RAP <- "right atrial pressure of (\\d+\\.?\\d+?) mmHg"
+  pattern_RAP <- "right atrial pressure of (\\d+(?:\\.\\d+)?) mmHg"
   match_RAP <- str_match(document_text, pattern_RAP)
   
   if (!is.na(match_RAP[1, 2])) {
@@ -462,7 +473,7 @@ for (index in seq(nrow(df))) {
     cat(sprintf("RAP: %s\n", RA_pressure))
     output_RAP <- sprintf("%s", RA_pressure)
   } else {
-    pattern_RAP_No_IVC <- "(IVC is not well seen|IVC is not clearly seen|IVC size is not well seen|IVC size is not clearly seen|IVC size is not visualized|IVC size is not clearly visualized| IVC size is not well visualized|IVC size could not be determined|IVC size could not be assessed|IVC size could not be ascertained|IVC size was not acquired|IVC size was not assessed|IVC size was not determined)"
+    pattern_RAP_No_IVC <- "(IVC is [Nn]ot well seen|IVC is [Nn]ot clearly seen|IVC size is [Nn]ot well seen|IVC size is [Nn]ot clearly seen|IVC size is [Nn]ot visualized|IVC size is [Nn]ot clearly visualized|IVC size is [Nn]ot well visualized|IVC size could [Nn]ot be determined|IVC size could [Nn]ot be assessed|IVC size could [Nn]ot be ascertained|IVC size was [Nn]ot acquired|IVC size was [Nn]ot assessed|IVC size was [Nn]ot determined)"
     match_RAP_IVC <- str_match(document_text, pattern_RAP_No_IVC)
     
     if (!is.na(match_RAP_IVC [1, 2])) {
@@ -470,7 +481,7 @@ for (index in seq(nrow(df))) {
       cat(sprintf("RAP: IVC - %s\n", IVC_1))
       output_RAP <- sprintf("%s", IVC_1)
     } else {
-      pattern_RAP_IVC_Pressure_Type <- "IVC(?:\\ssize)?.*?(normal RA pressure|normal right atrial pressure|normal right atrium pressure)"
+      pattern_RAP_IVC_Pressure_Type <- "IVC(?:\\ssize)?.*?(normal RA pressure|normal right atrial pressure|normal right atrium pressure|low RA pressure|low right atrial pressure|low right atrium pressure)"
       match_RAP_IVC_Pressure_Type <- str_match(document_text, pattern_RAP_IVC_Pressure_Type)
       
       if (!is.na(match_RAP_IVC_Pressure_Type [1, 2])) {
@@ -495,7 +506,7 @@ for (index in seq(nrow(df))) {
   
   #RV Function
   
-  RVFunctionsentence_pattern_1 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?([^.]*(?:Global RV|Global right ventricular)(?:\\ssystolic)?(?:\\sfunction)[^.]*).*CONCLUSIONS"
+  RVFunctionsentence_pattern_1 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?([^.]*(?:Global RV|Global right ventricular|RVSF)(?:\\ssystolic\\sfunction|\\sfunction)[^.]*).*CONCLUSIONS"
   RVFunctionsentence_matches_1 <- str_match(document_text, RVFunctionsentence_pattern_1)
   RVFunctionsentence_pattern_2 <- "CONCLUSIONS.*?([^.]*(?:Right ventricular|right ventricular|RV)(?:\\ssystolic)?(?:\\sfunction)[^.]*)"
   RVFunctionsentence_matches_2 <- str_match(document_text, RVFunctionsentence_pattern_2)
@@ -506,7 +517,7 @@ for (index in seq(nrow(df))) {
   if (!is.na(RVFunctionsentence_matches_1 [1, 2])) {
     RVFunctionsentence_1 <- RVFunctionsentence_matches_1 [1, 2]
     cat(sprintf("RVFunction Sentence 1: %s\n", RVFunctionsentence_1))
-    RVFunction_1_pattern <- "(low (?:\\s+)?normal|normal|mildly to moderately|mildly - moderately|mildly-moderately|mildly|moderately - severely|moderately-severely|moderately to severely|moderately|severely|hyperdynamic)"
+    RVFunction_1_pattern <- "(low (?:\\s+)?normal|normal|mildly to moderately|mildly - moderately|mildly-moderately|mildly|moderately - severely|moderately-severely|moderately to severely|moderately|severely|hyperdynamic|could not be assessed|could not be adequately assessed|could not be adequately assesed|reduced|not well seen|could not be performed)"
     RVFunction_1_match <- str_match(RVFunctionsentence_1, RVFunction_1_pattern)
     
     if (!is.na(RVFunction_1_match [1, 2])) {
@@ -618,7 +629,7 @@ for (index in seq(nrow(df))) {
   
   #Mitral Valve Structure
   
-  MVStructuresentence_pattern_1 <- "Mitral Valve:.*?([^.]*(?:Mitral valve|mitral valve)(?:\\sis|\\sappears|\\snot well seen|\\shas a|\\sabnormal|\\w+\\smechanical|\\w+\\sbioprosthesis)[^.]*).*CONCLUSIONS"
+  MVStructuresentence_pattern_1 <- "Mitral Valve:.*?([^.]*(?:Mitral valve|mitral valve)(?:\\sis|\\sappears|\\sValve|\\sgrossly|\\snot well seen|\\shas a|\\sabnormal|\\w+\\smechanical|\\w+\\sbioprosthesis)[^.]*).*?(?:Tricuspid Valve:|Pulmonic Valve:|CONCLUSIONS)"
   MVStructuresentence_matches_1 <- str_match(document_text, MVStructuresentence_pattern_1)
   
   output_MVStructure <- ""
@@ -655,9 +666,25 @@ for (index in seq(nrow(df))) {
       cat(sprintf("MV Structure: %s\n", MVStructure_match_2))
       output_MVStructure <- MVStructure_match_2
     } else {
+      MVStructuresentence_pattern_3 <- "Mitral Valve:.*?([^.]*anterior and posterior leaflets[^.]*).*?(?:Tricuspid Valve:|Pulmonic Valve:|CONCLUSIONS)"
+      MVStructuresentence_matches_3 <- str_match(document_text, MVStructuresentence_pattern_3)
+      if (!is.na(MVStructuresentence_matches_3 [1, 2])) {
+        MVStructuresentence_2 <- MVStructuresentence_matches_3 [1, 2]
+        MVStructure_2_pattern <- "(normal|Normal|mildly-moderately|Mildly-moderately|mildly to moderately|Mildly to moderately|mildly|Mildly|moderately|Moderately|moderately-severely|Moderately-severely|moderately to severely|Moderately to severely|moderately|Moderately|severely|Severely|no\\b|No\\b|not well seen|not visualized|not clearly visualized|not well visualized|bioprosthetic valve|thickened|rheumatic|calcified|mechanical)"
+        MVStructure_2_match <- str_match(MVStructuresentence_2, MVStructure_2_pattern) 
+        cat(sprintf("MV Structure: %s\n", MVStructuresentence_2))
+        if (!is.na(MVStructure_2_match [1, 2])) {
+          output_MVStructure <- MVStructure_2_match [1, 2]
+          cat(sprintf("MV Structure: %s\n", MVStructure_2_match [1, 2]))
+        } else {
+          output_MVStructure <- ""
+          output_MVStructureError <- "No categorization found"
+        }
+      } else {
       cat("MV Structure: Error, no MV Structure doppler sentence found")
       output_MVStructure <- ""
       output_MVStructureError <- "Error, no MV Structure doppler sentence found"
+      }
     }
   } 
   
@@ -809,7 +836,7 @@ for (index in seq(nrow(df))) {
   
   #Aortic Valve Structure
   
-  AVStructuresentence_pattern_1 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?([^.]*(?:Aortic valve|aortic valve)(?:\\sis|\\sappears|\\snot well seen)[^.]*).*CONCLUSIONS"
+  AVStructuresentence_pattern_1 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?([^.]*(?:Aortic valve|aortic valve)(?:\\sis|\\sappears|\\snot well seen|\\snormal)[^.]*).*CONCLUSIONS"
   AVStructuresentence_matches_1 <- str_match(document_text, AVStructuresentence_pattern_1)
   
   output_AVStructure <- ""
@@ -1091,7 +1118,7 @@ for (index in seq(nrow(df))) {
       output_TVStructure <- TVStructure_1
       cat(sprintf("TV Structure: %s\n", TVStructure_1))
     } else {
-      TVStructure_2_pattern <- "(bicuspid|tricuspid|trileaflet)"
+      TVStructure_2_pattern <- "(bicuspid)"
       TVStructure_2_match <- str_match(TVStructuresentence_1, TVStructure_2_pattern)
       if (!is.na(TVStructure_2_match [1, 2])){
         TVStructure_2 <- TVStructure_2_match [1, 2]
@@ -1180,7 +1207,7 @@ for (index in seq(nrow(df))) {
   
   #Pulmonic Regurgitation
   
-  PRsentence_pattern_1 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?([^.]*(?:Pulmonic valve regurgitation|pulmonic valve regurgitation|Pulmonic regurgitation|pulmonic regurgitation)[^.]*).*CONCLUSIONS"
+  PRsentence_pattern_1 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?([^.]*(?:Pulmonic valve regurgitation|pulmonic valve regurgitation|Pulmonic regurgitation|pulmonic regurgitation|[Pp]ulmonic insufficiency)[^.]*).*CONCLUSIONS"
   PRsentence_matches_1 <- str_match(document_text, PRsentence_pattern_1)
   PRsentence_pattern_2 <- "CONCLUSIONS.*?([^.]*(?:Pulmonic valve regurgitation|pulmonic valve regurgitation|Pulmonic regurgitation|pulmonic regurgitation)[^.]*)"
   PRsentence_matches_2 <- str_match(document_text, PRsentence_pattern_2)
@@ -1191,12 +1218,12 @@ for (index in seq(nrow(df))) {
   if (!is.na(PRsentence_matches_1 [1, 2])) {
     PRsentence_1 <- PRsentence_matches_1 [1, 2]
     cat(sprintf("PR Sentence 1: %s\n", PRsentence_1))
-    PR_1_pattern <- "(mild-moderate|Mild-moderate|mild to moderate|Mild to moderate|mild|Mild|moderate|Moderate|moderate-severe|Moderate-severe|moderate to severe|Moderate to severe|moderate|Moderate|severe|Severe|no\\b|No\\b|trace|Trace|trivial|Trivial|not assessed|Shadowing from the prosthesis|shadowing from the prosthesis)"
+    PR_1_pattern <- "(mild-moderate|Mild-moderate|mild to moderate|Mild to moderate|mild|Mild|moderate|Moderate|moderate-severe|Moderate-severe|moderate to severe|Moderate to severe|moderate|Moderate|severe|Severe|no\\b|No\\b|trace|Trace|trivial|Trivial|not assessed|Shadowing from the prosthesis|shadowing from the prosthesis|could not be assessed)"
     PR_1_match <- str_match(PRsentence_1, PR_1_pattern)
     
     if (!is.na(PR_1_match [1, 2])) {
       PR_1 <- tolower(PR_1_match [1, 2])
-      if (PR_1 == "no" | PR_1 == "trivial" | PR_1 == "mild" | PR_1 == "mild-moderate" | PR_1 == "mild - moderate" | PR_1 == "mild to moderate" | PR_1 == "not assessed" | PR_1 == "shadowing from the prosthesis") {
+      if (PR_1 == "no" | PR_1 == "trivial" | PR_1 == "trace" | PR_1 == "mild" | PR_1 == "mild-moderate" | PR_1 == "mild - moderate" | PR_1 == "mild to moderate" | PR_1 == "not assessed" | PR_1 == "shadowing from the prosthesis") {
         output_PR <- PR_1
         cat(sprintf("PR: %s\n", PR_1))
       } else {
