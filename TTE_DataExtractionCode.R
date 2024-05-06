@@ -751,6 +751,8 @@ for (index in seq(nrow(df))) {
     AR_1_pattern <- "(mild-moderate|Mild-moderate|mild to moderate|Mild to moderate|mild|Mild|moderate|Moderate|moderate-severe|Moderate-severe|moderate to severe|Moderate to severe|moderate|Moderate|severe|Severe|no\\b|No\\b|trace|Trace|trivial|Trivial|not assessed|Shadowing from the prosthesis|shadowing from the prosthesis)"
     AR_1_match <- str_match(ARsentence_1, AR_1_pattern)
     
+    
+    
     if (!is.na(AR_1_match [1, 2])) {
       AR_1 <- tolower(AR_1_match [1, 2])
       if (AR_1 == "no" | AR_1 == "trivial" | AR_1 == "mild" | AR_1 == "mild-moderate" | AR_1 == "mild - moderate" | AR_1 == "mild to moderate" | AR_1 == "not assessed" | AR_1 == "shadowing from the prosthesis") {
@@ -782,9 +784,14 @@ for (index in seq(nrow(df))) {
           }
           
         } else {
-          cat("AR: Error, no AR conclusions sentence found\n")
-          output_AR <- AR_1 
-          output_ARError <- "AR: Error, no AR conclusions sentence found"
+          if (AR_1 == "trace") {
+            cat("AR: trace\n")
+            output_AR <- AR_1
+          } else {
+            cat("AR: Error, no AR conclusions sentence found\n")
+            output_AR <- AR_1 
+            output_ARError <- "AR: Error, no AR conclusions sentence found"}
+          
         }
       }
     } else {
