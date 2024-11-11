@@ -3,10 +3,8 @@ library(stringr)
 library(tidyverse)
 library(openxlsx)
 
-
 # Specify the file path
 excel_file_path <- '/Users/Nischal/TTE_DataExtraction/echo_deidentified.xlsx'
-
 
 # Read the Excel file into a DataFrame
 df <- read_excel(excel_file_path)
