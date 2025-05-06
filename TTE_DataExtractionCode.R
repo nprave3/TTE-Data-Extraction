@@ -1850,11 +1850,15 @@ for (index in seq(nrow(df))) {
       } else {
         if (!is.na(AVStenosissentence_matches_2 [1, 2])) {
           
-          AVGradient_pattern <- "CONCLUSIONS.*?(?:M[a-z][a-z]n|m[a-z][a-z]n)(?:\\sAV)?(?:\\sPG|\\spressure\\sgradient|\\sgradient)(?:\\s\\w+)?(?:\\s\\w+)?(?:\\s\\w+)?\\s(\\d+(?:.)?\\d+)"
+          AVGradient_pattern <- "CONCLUSIONS.*?(?:M[a-z][a-z]n|m[a-z][a-z]n)(?:\\sAV)?(?:\\sPG|\\spressure\\sg\\w+t|\\sg\\w+t)(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?\\s?(\\d+(?:\\.\\d+)?\\s?m?m?\\s?Hg?)"
           AVGradient_match <- str_match(document_text, AVGradient_pattern)
-          AVPeakGradient_pattern <- "CONCLUSIONS.*?(?:P[a-z][a-z]k|p[a-z][a-z]k)(?:\\sAV)?(?:\\sPG|\\spressure\\sgradient|\\sgradient)\\D+(\\d+(?:.)?\\d+)"
+          AVGradient_pattern_2 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?:M[a-z][a-z]n|m[a-z][a-z]n)(?:\\sAV)?(?:\\sPG|\\spressure\\sg\\w+t|\\sg\\w+t)(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?\\s?(\\d+(?:\\.\\d+)?\\s?m?m?\\s?Hg?)"
+          AVGradient_match_2 <- str_match(document_text, AVGradient_pattern_2)
+          AVPeakGradient_pattern <- "CONCLUSIONS.*?(?:P[a-z][a-z]k|p[a-z][a-z]k)(?:\\sAV)?(?:\\sPG|\\spressure\\sgradient|\\sgradient|\\sv\\w+ty)(?:\\s[A-Za-z]+)?\\s(\\d+(?:\\.\\d+)?\\s?m\\s?m\\s?[A-Za-z]{2}?)"
           AVPeakGradient_match <- str_match(document_text, AVPeakGradient_pattern)
-          AVArea_pattern <- "CONCLUSIONS.*?(?:Aortic stenosis|aortic stenosis).*?(?:Valve|valve) area(?:\\s\\w+)?(?:\\s\\w+)?(?:\\s\\w+)?\\s(\\d+(?:.)?\\d+)"
+          AVPeakGradient_pattern_2 <-"TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?:P[a-z][a-z]k|p[a-z][a-z]k)(?:\\sAV)?(?:\\sPG|\\spressure\\sgradient|\\sgradient|\\sv\\w+ty)(?:\\s[A-Za-z]+)?\\s(\\d+(?:\\.\\d+)?\\s?m\\s?m\\s?[A-Za-z]{2}?)"
+          AVPeakGradient_match_2 <- str_match(document_text, AVPeakGradient_pattern_2) 
+          AVArea_pattern <- "CONCLUSIONS.*?(?:Aortic\\s?(?:st\\w+)?|aortic\\s?(?:st\\w+)?|A).*?(?:Valve\\s?(?:a\\w+)?|valve\\s?(?:a\\w+)?|AVA)(?:\\s[A-Za-z]+){1,5}\\s?(?:\\sLVOT\\sd\\w+r\\sof\\s\\d+(?:\\.\\d+)?\\s?cm?\\s?is?\\s?.?\\s?\\s?)?(?:\\s[A-Za-z]+){1,5}\\s?(\\d+(?:\\.\\d+)?)"
           AVArea_match <- str_match(document_text, AVArea_pattern)
           AVArea_pattern_2 <- "CONCLUSIONS.*?AVA\\s+(\\d+(?:\\.\\d+)?)"
           AVArea_match_2 <- str_match(document_text, AVArea_pattern_2)
@@ -1863,22 +1867,25 @@ for (index in seq(nrow(df))) {
           AVArea_pattern_4 <- "CONCLUSIONS.*?(?:Aortic|aortic)(?:\\svalve\\sarea)(?:\\s\\w+)?(?:\\s\\w+)?(?:\\s\\w+)?\\s(\\d+(?:.)?\\d+)"
           AVArea_match_4 <- str_match(document_text, AVArea_pattern_4)
           
-          LVOTDiameter_pattern <- "CONCLUSIONS.*?AVA\\D+LVOT\\D+(\\d+(?:\\.\\d+)?)(?:\\s)?(?:cm)?\\s\\w+\\s(?:\\d+(?:\\.\\d+)?)"
+          LVOTDiameter_pattern <- "CONCLUSIONS.*?(?:AVA\\s)?\\s?(?:LVOT)(?:\\sd[A-Za-z]+r\\s?of?)?\\s(\\d+(?:\\.\\d+)?)(?:\\s?cm)?"
           LVOTDiameter_match <- str_match(document_text, LVOTDiameter_pattern)
           LVOTDiameter_pattern_2 <- "CONCLUSIONS.*?LVOT(?:\\sdiameter)?(?:\\sof)?\\s(\\d+(?:\\.\\d+)?)"
           LVOTDiameter_match_2 <- str_match(document_text, LVOTDiameter_pattern_2)
-          AVPeakVelocity_pattern <- "CONCLUSIONS.*?(?:Peak|peak)(?:\\sAV)? (?:velocity|velocities)(?:\\s\\w+)?(?:\\s\\w+)?(?:\\s\\w+)?\\s(\\d+(?:.\\d+)?)"
+          AVPeakVelocity_pattern <- "CONCLUSIONS.*?(?:Peak|peak)(?:\\sAV)? (?:velocity|velocities)(?:\\s\\w+)?(?:\\s\\w+)?\\s?(\\d+(?:\\.\\d+)?\\s?(?:m\\/.?.?.?)?)"
           AVPeakVelocity_match <- str_match(document_text, AVPeakVelocity_pattern)
-          AVPeakVelocity_pattern_2 <- "CONCLUSIONS.*?(?:Vmax|VMAX|VMax|vmax)(?:\\sAV)?\\D+(\\d+(?:.\\d+)?)"
+          AVPeakVelocity_pattern_2 <- "CONCLUSIONS.*?(?:Vmax|VMAX|VMax|vmax)(?:\\sAV)?\\s?(\\d+(?:\\.\\d+)?\\s?(?:m\\/.?.?.?)?)"
           AVPeakVelocity_match_2 <- str_match(document_text, AVPeakVelocity_pattern_2)
-          AVDimensionlessIndex_pattern <- "CONCLUSIONS.*?\\b(?:DI|Dimensionless index|Dimensionless Index|dimensionless index)\\b(?:\\sof|\\sis)?\\D+(\\d+(?:.\\d+)?)"
+          AVDimensionlessIndex_pattern <- "CONCLUSIONS.*?(?i)(?:DI|D[A-Z][a-z]+s\\s?I[A-Z][a-z]+x)\\s?(?:\\sof|\\sis)?\\s?(\\d+(?:\\.\\d+)?)"
           AVDimensionlessIndex_match <- str_match(document_text, AVDimensionlessIndex_pattern)
-          AViSV_pattern <- "CONCLUSIONS.*?(?:iSV|SVi|SVI|indexed stroke volume|stroke volume index)\\D+(\\d+(?:.)?\\d+)"
+          AViSV_pattern <- "CONCLUSIONS.*?(?i)(?:iSV|SVi|i[a-z]+x\\s?s[a-z]+e\\s?v[a-z]+e|s[a-z]+e\\s?v[a-z]+e\\s?i[a-z]+x)\\s?(?:of|is)?\\s?(\\d+(?:\\.\\d+)?)"
           AViSV_match <- str_match(document_text, AViSV_pattern)
           
           if (!is.na(AVGradient_match [1, 2])) {
             output_AVGradient <- AVGradient_match [1, 2]
             cat(sprintf("AV Gradient: %s\n", AVGradient_match [1, 2]))
+          } else if (!is.na(AVGradient_match_2 [1, 2])) {
+            output_AVGradient <- AVGradient_match_2 [1, 2]
+            cat(sprintf("AV Gradient: %s\n", AVGradient_match_2 [1, 2]))
           } else {
             output_AVGradient <- ""
             cat("AV Gradient: No match found\n")
@@ -1886,6 +1893,9 @@ for (index in seq(nrow(df))) {
           if (!is.na(AVPeakGradient_match [1, 2])) {
             output_AVPeakGradient <- AVPeakGradient_match [1, 2]
             cat(sprintf("AV Peak Gradient: %s\n", AVPeakGradient_match [1, 2]))
+          } else if (!is.na(AVPeakGradient_match_2 [1, 2])) {
+            output_AVPeakGradient <- AVPeakGradient_match_2 [1, 2]
+            cat(sprintf("AV Peak Gradient: %s\n", AVPeakGradient_match_2 [1, 2]))
           } else {
             output_AVPeakGradient <- ""
             cat("AV Peak Gradient: No match found\n")
