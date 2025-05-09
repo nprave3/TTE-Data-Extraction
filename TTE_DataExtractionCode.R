@@ -1850,13 +1850,13 @@ for (index in seq(nrow(df))) {
       } else {
         if (!is.na(AVStenosissentence_matches_2 [1, 2])) {
           
-          AVGradient_pattern <- "CONCLUSIONS.*?(?:M[a-z][a-z]n|m[a-z][a-z]n)(?:\\sAV)?(?:\\sPG|\\spressure\\sg\\w+t|\\sg\\w+t)(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?\\s?(\\d+(?:\\.\\d+)?\\s?m?m?\\s?Hg?)"
+          AVGradient_pattern <- "CONCLUSIONS.*?(?:M[a-z][a-z]n|m[a-z][a-z]n)(?:\\sAV)?(?:\\sPG|\\spressure\\sg\\w+t|\\sg\\w+t)(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?\\s?(\\d+(?:\\.\\d+)?)(?:\\s?m?m?\\s?Hg?)"
           AVGradient_match <- str_match(document_text, AVGradient_pattern)
-          AVGradient_pattern_2 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?:M[a-z][a-z]n|m[a-z][a-z]n)(?:\\sAV)?(?:\\sPG|\\spressure\\sg\\w+t|\\sg\\w+t)(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?\\s?(\\d+(?:\\.\\d+)?\\s?m?m?\\s?Hg?)"
+          AVGradient_pattern_2 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?:M[a-z][a-z]n|m[a-z][a-z]n)(?:\\sAV)?(?:\\sPG|\\spressure\\sg\\w+t|\\sg\\w+t)(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?(?:\\s[A-Za-z]+)?\\s?(\\d+(?:\\.\\d+)?)(?:\\s?m?m?\\s?Hg?)"
           AVGradient_match_2 <- str_match(document_text, AVGradient_pattern_2)
-          AVPeakGradient_pattern <- "CONCLUSIONS.*?(?:P[a-z][a-z]k|p[a-z][a-z]k)(?:\\sAV)?(?:\\sPG|\\spressure\\sgradient|\\sgradient|\\sv\\w+ty)(?:\\s[A-Za-z]+)?\\s(\\d+(?:\\.\\d+)?\\s?m\\s?m\\s?[A-Za-z]{2}?)"
+          AVPeakGradient_pattern <- "CONCLUSIONS.*?(?:P[a-z][a-z]k|p[a-z][a-z]k)(?:\\sAV)?(?:\\sPG|\\spressure\\sgradient|\\sgradient|\\sv\\w+ty)(?:\\s[A-Za-z]+)?\\s(\\d+(?:\\.\\d+)?)(?:\\s?m\\s?m\\s?[A-Za-z]{2}?)"
           AVPeakGradient_match <- str_match(document_text, AVPeakGradient_pattern)
-          AVPeakGradient_pattern_2 <-"TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?:P[a-z][a-z]k|p[a-z][a-z]k)(?:\\sAV)?(?:\\sPG|\\spressure\\sgradient|\\sgradient|\\sv\\w+ty)(?:\\s[A-Za-z]+)?\\s(\\d+(?:\\.\\d+)?\\s?m\\s?m\\s?[A-Za-z]{2}?)"
+          AVPeakGradient_pattern_2 <-"TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?:P[a-z][a-z]k|p[a-z][a-z]k)(?:\\sAV)?(?:\\sPG|\\spressure\\sgradient|\\sgradient|\\sv\\w+ty)(?:\\s[A-Za-z]+)?\\s(\\d+(?:\\.\\d+)?)(?:\\s?m\\s?m\\s?[A-Za-z]{2}?)"
           AVPeakGradient_match_2 <- str_match(document_text, AVPeakGradient_pattern_2) 
           AVArea_pattern <- "CONCLUSIONS.*?(?:Aortic\\s?(?:st\\w+)?|aortic\\s?(?:st\\w+)?|A).*?(?:Valve\\s?(?:a\\w+)?|valve\\s?(?:a\\w+)?|AVA)(?:\\s[A-Za-z]+){1,5}\\s?(?:\\sLVOT\\sd\\w+r\\sof\\s\\d+(?:\\.\\d+)?\\s?cm?\\s?is?\\s?.?\\s?\\s?)?(?:\\s[A-Za-z]+){1,5}\\s?(\\d+(?:\\.\\d+)?)"
           AVArea_match <- str_match(document_text, AVArea_pattern)
@@ -1873,9 +1873,9 @@ for (index in seq(nrow(df))) {
           LVOTDiameter_match_2 <- str_match(document_text, LVOTDiameter_pattern_2)
           AVPeakVelocity_pattern <- "CONCLUSIONS.*?(?:Peak|peak)(?:\\sAV)? (?:velocity|velocities)(?:\\s\\w+)?(?:\\s\\w+)?\\s?(\\d+(?:\\.\\d+)?\\s?(?:m\\/.?.?.?)?)"
           AVPeakVelocity_match <- str_match(document_text, AVPeakVelocity_pattern)
-          AVPeakVelocity_pattern_2 <- "CONCLUSIONS.*?(?:Vmax|VMAX|VMax|vmax)(?:\\sAV)?\\s?(\\d+(?:\\.\\d+)?\\s?(?:m\\/.?.?.?)?)"
+          AVPeakVelocity_pattern_2 <- "CONCLUSIONS.*?(?:Vmax|VMAX|VMax|vmax)(?:\\sAV)?\\s?(\\d+(?:\\.\\d+)?)\\s?(?:m\\/.?.?.?)?"
           AVPeakVelocity_match_2 <- str_match(document_text, AVPeakVelocity_pattern_2)
-          AVDimensionlessIndex_pattern <- "CONCLUSIONS.*?(?i)(?:DI|D[A-Z][a-z]+s\\s?I[A-Z][a-z]+x)\\s?(?:\\sof|\\sis)?\\s?(\\d+(?:\\.\\d+)?)"
+          AVDimensionlessIndex_pattern <- "CONCLUSIONS.*?(?i)(?:DI|D[A-Z][a-z]+s\\s?I[A-Z][a-z]+x)\\s?(?:using [Vv]\\w+|by [Vv]\\w+|via [Vv]\\w+)?(?:\\sof|\\sis)?\\s?(\\d+(?:\\.\\d+)?)"
           AVDimensionlessIndex_match <- str_match(document_text, AVDimensionlessIndex_pattern)
           AViSV_pattern <- "CONCLUSIONS.*?(?i)(?:iSV|SVi|i[a-z]+x\\s?s[a-z]+e\\s?v[a-z]+e|s[a-z]+e\\s?v[a-z]+e\\s?i[a-z]+x)\\s?(?:of|is)?\\s?(\\d+(?:\\.\\d+)?)"
           AViSV_match <- str_match(document_text, AViSV_pattern)
@@ -2711,7 +2711,6 @@ for (index in seq(nrow(df))) {
       `TR Velocity` = output_TRvelocity,
       `PASP` = output_pasp,
       `PASP_Value` = output_PASP_value
-  
     )
     output_list <- c(output_list, list(output_df))
 }
