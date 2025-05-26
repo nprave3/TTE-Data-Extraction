@@ -832,6 +832,31 @@ for (index in seq(nrow(df))) {
     }
   }
   
+  #MR Type
+  
+  MRType_pattern <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?i)(?:Mitral Valve).*?(central|eccentric)"
+  MRType_match <- str_match(document_text, MRType_pattern)
+  MRType_pattern_2 <- "CONCLUSIONS.*?(?i)(?:Mitral).*?(central|eccentric)"
+  MRType_match_2 <- str_match(document_text, MRType_pattern_2)
+  MRType_pattern_3 <- "CONCLUSIONS.*?(?i)(central|eccentric)(?:\\s?\\w+?\\s?\\w+?)?\\s?(?:mitral)"
+  MRType_match_3 <- str_match(document_text, MRType_pattern_3)
+  
+  output_MRType <- ""
+  
+  if (!is.na(MRType_match [1, 2])) {
+    output_MRType <- MRType_match [1, 2]
+    cat(sprintf("MR Type: %s\n", MRType_match [1, 2]))
+  } else if (!is.na(MRType_match_2 [1, 2])) {
+    output_MRType <- MRType_match_2 [1, 2]
+    cat(sprintf("MR Type: %s\n", MRType_match_2 [1, 2]))
+  } else if (!is.na(MRType_match_3 [1, 2])) {
+    output_MRType <- MRType_match_3 [1, 2]
+    cat(sprintf("MR Type: %s\n", MRType_match_3 [1, 2]))
+  } else {
+    output_MRType <- ""
+    cat("MR Type: No match found\n")
+  }
+  
   # Mitral Valve Structure
   
   MVStructurePatterns <- list(
@@ -1317,6 +1342,30 @@ for (index in seq(nrow(df))) {
     cat("MV Stenosis: Error, no MV Stenosis doppler sentence found")
     output_MVStenosis <- ""
     output_MVStenosisError <- "MVStenosis: Error, no MVStenosis doppler sentence found"
+  }
+  
+  #Mitral Mean Gradient
+  pattern_MVMeanGradient <- "CONCLUSIONS.*?(?i)\\s?(?:mitral).*?(?:m[a-z]+n).*?(?:gr[a-z]+nt)\\s?(?:[a-z]{1,3})?\\s?(\\d+(?:\\.\\d+)?(?:\\s?-\\s?\\d{1,2})?)\\s?.*?(?:heart\\s?rate|HR|at).*?(\\d{1,2})(?:\\s?bpm?)?"
+  match_MVMeanGradient <- str_match(document_text, pattern_MVMeanGradient)
+  
+  output_MVMeanGradient <- ""
+  output_MVHR <- ""
+  
+  if (!is.na(match_MVMeanGradient[1, 2])) {
+    MVMeanGradient <- match_MVMeanGradient[1, 2]
+    cat(sprintf("MV Mean Gradient: %s\n", MVMeanGradient))
+    output_MVMeanGradient <- sprintf("%s", MVMeanGradient)
+  } else {
+    cat("MV Mean Gradient: MV Mean Gradient not found in the document.\n")
+    output_MVMeanGradient <- ""
+  }
+  if (!is.na(match_MVMeanGradient[1, 3])) {
+    MVHR <- match_MVMeanGradient[1, 3]
+    cat(sprintf("MV HR: %s\n", MVHR))
+    output_MVHR <- sprintf("%s", MVHR)
+  } else {
+    cat("MV HR: MV HR not found in the document.\n")
+    output_MVHR <- ""
   }
   
   #TR Velocity
@@ -1858,13 +1907,13 @@ for (index in seq(nrow(df))) {
           AVPeakGradient_match <- str_match(document_text, AVPeakGradient_pattern)
           AVPeakGradient_pattern_2 <-"TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?:P[a-z][a-z]k|p[a-z][a-z]k)(?:\\sAV)?(?:\\sPG|\\spressure\\sgradient|\\sgradient|\\sv\\w+ty)(?:\\s[A-Za-z]+)?\\s(\\d+(?:\\.\\d+)?)(?:\\s?m\\s?m\\s?[A-Za-z]{2}?)"
           AVPeakGradient_match_2 <- str_match(document_text, AVPeakGradient_pattern_2) 
-          AVArea_pattern <- "CONCLUSIONS.*?(?:Aortic\\s?(?:st\\w+)?|aortic\\s?(?:st\\w+)?|A).*?(?:Valve\\s?(?:a\\w+)?|valve\\s?(?:a\\w+)?|AVA)(?:\\s[A-Za-z]+){1,5}\\s?(?:\\sLVOT\\sd\\w+r\\sof\\s\\d+(?:\\.\\d+)?\\s?cm?\\s?is?\\s?.?\\s?\\s?)?(?:\\s[A-Za-z]+){1,5}\\s?(\\d+(?:\\.\\d+)?)"
+          AVArea_pattern <- "CONCLUSIONS.*?(?i)(?:\\bAortic).*?(?:\\bAVA|\\bvalve\\s?area).*?(?:LVOT).*?(?:\\b\\d+(?:\\.\\d{1,2})?\\b).*?(\\b\\d+(?:\\.\\d+)?)"
           AVArea_match <- str_match(document_text, AVArea_pattern)
-          AVArea_pattern_2 <- "CONCLUSIONS.*?AVA\\s+(\\d+(?:\\.\\d+)?)"
+          AVArea_pattern_2 <- "CONCLUSIONS.*?(?i)(?:\\bAortic).*?(?:\\bAVA|\\bvalve\\s?area\\b).*?(\\d+(?:\\.\\d+)?)"
           AVArea_match_2 <- str_match(document_text, AVArea_pattern_2)
-          AVArea_pattern_3 <- "CONCLUSIONS.*?AVA\\D+(?:\\d+(?:\\.\\d+)?)(?:\\s)?(?:cm)?\\s\\w+\\s(\\d+(?:\\.\\d+)?)"
+          AVArea_pattern_3 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?i)(?:\\bAortic).*?(?:\\bAVA|\\bvalve\\s?area).*?(?:LVOT).*?(?:\\b\\d+(?:\\.\\d{1,2})?\\b).*?(\\b\\d+(?:\\.\\d+)?)"
           AVArea_match_3 <- str_match(document_text, AVArea_pattern_3)
-          AVArea_pattern_4 <- "CONCLUSIONS.*?(?:Aortic|aortic)(?:\\svalve\\sarea)(?:\\s\\w+)?(?:\\s\\w+)?(?:\\s\\w+)?\\s(\\d+(?:.)?\\d+)"
+          AVArea_pattern_4 <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?i)(?:\\bAortic).*?(?:\\bAVA|\\bvalve\\s?area\\b).*?(\\d+(?:\\.\\d+)?)"
           AVArea_match_4 <- str_match(document_text, AVArea_pattern_4)
           
           LVOTDiameter_pattern <- "CONCLUSIONS.*?(?:AVA\\s)?\\s?(?:LVOT)(?:\\sd[A-Za-z]+r\\s?of?)?\\s(\\d+(?:\\.\\d+)?)(?:\\s?cm)?"
@@ -2598,6 +2647,20 @@ for (index in seq(nrow(df))) {
   
   cat("PASP Value:", output_PASP_value, "\n")
   
+  #ICD
+  ICD_pattern <- "TWO-DIMENSIONAL STUDY AND DOPPLER EVALUATION.*?(?i)(?:general comments).*?(ICD\\s?lead|pacer\\s?wire|lead|leads|wires)"
+  ICD_matches <- str_match(document_text, ICD_pattern)
+  
+  output_ICD <- ""
+  
+  if (!is.na(ICD_matches [1, 2])) {
+    ICD <- ICD_matches [1, 2]
+    output_ICD <- ICD
+  } else {
+    output_ICD <- ""
+  }
+  cat("ICD:", output_ICD, "\n")
+  
   # Append data to the output list
   
     output_df <- data.frame(
@@ -2638,6 +2701,7 @@ for (index in seq(nrow(df))) {
       `RV Function Error` = output_RVFunctionError,
       `MV Regurgitation` = output_MR,
       `MV Regurgitation Error` = output_MRError,
+      `MR Type` = output_MRType,
       `MV Structure` = output_MVStructure,
       `MV Structure Error` = output_MVStructureError,
       `MV Motion` = output_MVMotion,
@@ -2658,6 +2722,8 @@ for (index in seq(nrow(df))) {
       `MV Leaflet Structure Error` = output_leafletstructure_error,
       `MV Stenosis` = output_MVStenosis,
       `MV Stenosis Error` = output_MVStenosisError,
+      `MV Mean Gradient` = output_MVMeanGradient,
+      `MV HR` = output_MVHR,
       `AV Regurgitation` = output_AR,
       `AV Regurgitation Error` = output_ARError,
       `AV Structure` = output_AVStructure,
@@ -2710,7 +2776,8 @@ for (index in seq(nrow(df))) {
       `PV Stenosis Error` = output_PVStenosisError,
       `TR Velocity` = output_TRvelocity,
       `PASP` = output_pasp,
-      `PASP_Value` = output_PASP_value
+      `PASP_Value` = output_PASP_value,
+      `ICD` = output_ICD
     )
     output_list <- c(output_list, list(output_df))
 }
